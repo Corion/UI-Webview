@@ -6,6 +6,7 @@
 #include "ppport.h"
 
 #include <vendor/webview.h>
+#include <Webview_reflect.c>
 
 #include "const-c.inc"
 
@@ -135,7 +136,6 @@ OUTPUT:
 void *
 Webview_webview_return(IV w, const char *seq, int status, const char *result);
 CODE:
-    /* Wrap the callback in a C function */
     webview_return((webview_t) w, seq, status, result);
 OUTPUT:
     RETVAL
