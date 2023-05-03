@@ -1,0 +1,6 @@
+Revision history for Perl extension UI::Webview.
+
+0.01  Wed May  3 19:25:37 2023
+	- original version; created by h2xs 1.23 with options
+		vendor/webview.h -n UI::Webview
+
