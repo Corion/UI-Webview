@@ -13,6 +13,6 @@ firefox-versions/
 chrome-versions/
 MYMETA.*
 frame-*.png
-*.pl
+/*.pl
 .prove
 .patch
