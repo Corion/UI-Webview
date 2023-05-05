@@ -8,6 +8,6 @@ typedef struct {
     AV * args;
 } Perl_cb_context;
 
-void Webview_reflect(webview_t w, const char *req, void *arg ) {
+void Webview_reflect(const char *seq, const char *req, void *arg ) {
     /* the args are the Perl SV we want to call and the Perl args stored */
 }
