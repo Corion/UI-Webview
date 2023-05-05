@@ -123,21 +123,20 @@ CODE:
     /* Wrap the callback in a C function */
     /* We leak this memory currently resp. unbinding and cleanup */
     /* is left to the caller */
-    Perl_cb_context* ctx;
-    //printf("Binding %s to %x\n", name, callback);
-    ctx = (Perl_cb_context *) newSV(sizeof(Perl_cb_context));
+    SV* res = newSVpvn("",sizeof(Perl_cb_context));
+    Perl_cb_context* ctx = (Perl_cb_context*) SvPV_nolen(res);
 
     ctx->w      = (webview_t) w;
     ctx->seq    = 0;
     ctx->req    = 0;
     ctx->js_name = newSVsv(name);
+    sv_dump(ctx->js_name);
     SvREFCNT_inc(callback);
     ctx->cb   = callback;
     SvREFCNT_inc(arg);
-    ctx->args = arg; /* I think we need to increment the refcount here */
+    ctx->args = arg;
 
     webview_bind( (webview_t) w, SvPV_nolen(name), &Webview_reflect, ctx);
-    printf("Bound %s to %x\n", SvPV_nolen(ctx->js_name), w);
 
     RETVAL = newSVpvn( ctx, sizeof(*ctx) );
 OUTPUT:
