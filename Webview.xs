@@ -117,18 +117,45 @@ CODE:
 OUTPUT:
     RETVAL
 
-void *
-Webview_webview_bind(IV w, const char *name, SV *callback, AV *arg);
+SV *
+Webview_webview_bind(IV w, SV *name, SV *callback, AV *arg);
 CODE:
     /* Wrap the callback in a C function */
-    webview_bind((webview_t) w, name, 0, 0);
+    /* We leak this memory currently resp. unbinding and cleanup */
+    /* is left to the caller */
+    Perl_cb_context* ctx;
+    //printf("Binding %s to %x\n", name, callback);
+    ctx = (Perl_cb_context *) newSV(sizeof(Perl_cb_context));
+
+    ctx->w      = (webview_t) w;
+    ctx->seq    = 0;
+    ctx->req    = 0;
+    ctx->js_name = newSVsv(name);
+    SvREFCNT_inc(callback);
+    ctx->cb   = callback;
+    SvREFCNT_inc(arg);
+    ctx->args = arg; /* I think we need to increment the refcount here */
+
+    webview_bind( (webview_t) w, SvPV_nolen(name), &Webview_reflect, ctx);
+    printf("Bound %s to %x\n", SvPV_nolen(ctx->js_name), w);
+
+    RETVAL = newSVpvn( ctx, sizeof(*ctx) );
 OUTPUT:
     RETVAL
 
 void *
-Webview_webview_unbind(IV w, const char *name);
+Webview_webview_unbind(IV w, SV *_ctx);
 CODE:
-    webview_unbind((webview_t) w, name);
+    // We need to find our old ctx here, resp. we don't want the name
+    // but the context returned from webview_bind() above
+    Perl_cb_context * ctx = (Perl_cb_context*) SvPV_nolen(_ctx);
+
+    printf("Unbinding %s from %x\n", SvPV_nolen(ctx->js_name), ctx->w);
+
+    webview_unbind(ctx->w, SvPV_nolen(ctx->js_name));
+    SvREFCNT_dec(ctx->cb);
+    SvREFCNT_dec(ctx->args);
+    SvREFCNT_dec(ctx->js_name);
 OUTPUT:
     RETVAL
 
