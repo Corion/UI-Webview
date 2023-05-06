@@ -1,3 +1,7 @@
+/* This is in a separate file so the xs-to-c converter doesn't choke
+ * on the typedef
+ */
+
 typedef struct {
 /* Stuff that Webview cares about */
     webview_t w;
@@ -22,7 +26,6 @@ void Webview_reflect(const char *seq, const char *req, void *arg ) {
     ENTER;
     SAVETMPS;
 
-    printf("Callback invoked on %x from javascript:%s to %x\n", ctx->w, SvPV_nolen(ctx->js_name), ctx->cb);
     PUSHMARK(SP);
     EXTEND(SP, 3);
     PUSHs(sv_2mortal(newSViv( (uint64_t) ctx->w )));

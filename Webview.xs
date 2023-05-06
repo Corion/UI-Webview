@@ -130,7 +130,6 @@ CODE:
     ctx->seq    = 0;
     ctx->req    = 0;
     ctx->js_name = newSVsv(name);
-    sv_dump(ctx->js_name);
     SvREFCNT_inc(callback);
     ctx->cb   = callback;
     SvREFCNT_inc(arg);
